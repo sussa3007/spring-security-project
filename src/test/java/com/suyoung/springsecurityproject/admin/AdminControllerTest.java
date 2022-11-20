@@ -1,4 +1,4 @@
-package com.suyoung.springsecurityproject.post;
+package com.suyoung.springsecurityproject.admin;
 
 import com.suyoung.springsecurityproject.user.User;
 import com.suyoung.springsecurityproject.user.UserRepository;
