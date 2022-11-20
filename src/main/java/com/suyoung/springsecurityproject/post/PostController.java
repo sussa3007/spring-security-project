@@ -19,7 +19,7 @@ public class PostController {
 
 
     @GetMapping
-    public String findByPost(Authentication authentication, Model model) {
+    public String getPost(Authentication authentication, Model model) {
         User user = (User) authentication.getPrincipal();
         List<Post> posts = postService.findByUser(user);
         model.addAttribute("posts", posts);
