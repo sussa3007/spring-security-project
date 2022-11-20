@@ -1,6 +1,5 @@
 package com.suyoung.springsecurityproject.notice;
 
-import com.suyoung.springsecurityproject.post.PostStatus;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,8 +26,6 @@ public class Notice {
     @Lob
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    private PostStatus status;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -41,6 +38,5 @@ public class Notice {
     ) {
         this.title = title;
         this.content = content;
-        this.status = PostStatus.Y;
     }
 }

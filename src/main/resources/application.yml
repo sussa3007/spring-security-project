@@ -1,7 +1,7 @@
 logging:
   level:
-    org.springframework.web: debug
-    sql: error
+    root: INFO
+    sql: ERROR
 spring:
   mvc:
     hiddenmethod:
@@ -20,6 +20,7 @@ spring:
     properties:
       hibernate:
         format_sql: true  # (3) SQL pretty print
+# session
 server:
   servlet:
     session:

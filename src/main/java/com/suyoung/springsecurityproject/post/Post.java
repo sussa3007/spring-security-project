@@ -25,9 +25,6 @@ public class Post {
     @Lob
     private String content;
 
-    @Enumerated(EnumType.STRING)
-    private PostStatus status;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
@@ -45,7 +42,6 @@ public class Post {
         this.title = title;
         this.content = content;
         this.user = user;
-        this.status = PostStatus.Y;
     }
 
     public void updateContent(

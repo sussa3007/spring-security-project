@@ -1,6 +1,8 @@
-package com.suyoung.springsecurityproject.post;
+package com.suyoung.springsecurityproject.admin;
 
 
+import com.suyoung.springsecurityproject.post.Post;
+import com.suyoung.springsecurityproject.post.PostService;
 import com.suyoung.springsecurityproject.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
