@@ -1,7 +1,9 @@
 package com.suyoung.springsecurityproject.post;
 
 
+import com.suyoung.springsecurityproject.user.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,21 +19,24 @@ public class PostController {
 
 
     @GetMapping
-    public String findByPost(Principal principal, Model model) {
-        List<Post> posts = postService.findByUserName(principal.getName());
+    public String findByPost(Authentication authentication, Model model) {
+        User user = (User) authentication.getPrincipal();
+        List<Post> posts = postService.findByUser(user);
         model.addAttribute("posts", posts);
         return "post/index";
     }
 
     @PostMapping
-    public String savePost(@ModelAttribute PostDto postDto, Principal principal) {
-        postService.savePost(principal.getName(), postDto.getTitle(), postDto.getContent());
+    public String savePost(Authentication authentication, @ModelAttribute PostDto postDto) {
+        User user = (User) authentication.getPrincipal();
+        postService.savePost(user, postDto.getTitle(), postDto.getContent());
         return "redirect:post";
     }
 
     @DeleteMapping
-    public String deletePost(@RequestParam Long id, Principal principal) {
-        postService.deletePost(principal.getName(), id);
+    public String deletePost(Authentication authentication, @RequestParam Long id) {
+        User user = (User) authentication.getPrincipal();
+        postService.deletePost(user, id);
         return "redirect:post";
     }
 }

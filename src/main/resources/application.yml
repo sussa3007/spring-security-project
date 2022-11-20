@@ -7,3 +7,7 @@ spring:
     hiddenmethod:
       filter:
         enabled: true
+server:
+  servlet:
+    session:
+      timeout: 10m # default 30m
