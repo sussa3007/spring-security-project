@@ -10,20 +10,30 @@ import java.security.Key;
 import java.util.Date;
 
 public class JwtUtils {
-
-    /*토큰에서 username 찾기*/
+    /**
+     * 토큰에서 username 찾기
+     *
+     * @param token 토큰
+     * @return username
+     */
     public static String getUsername(String token) {
-        return Jwts.parserBuilder() // parser용 builder
+        // jwt Token에서 username을 찾는다
+        return Jwts.parserBuilder()
                 .setSigningKeyResolver(SigningKeyResolver.instance)
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject();
+                .getSubject(); // username
     }
 
-    /*user로 토큰 생성*/
+    /**
+     * user로 토큰 생성
+     * HEADER : alg, kid
+     * PAYLOAD : sub, iat, exp
+     * SIGNATURE : JwtKey.getRandomKey로 구한 Secret Key로 HS512 해시
+     */
     public static String createToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        Claims claims = Jwts.claims().setSubject(user.getUsername()); // subject
         Date now = new Date(); // 현재 시간
         Pair<String, Key> key = JwtKey.getRandomKey();
         // JWT Token 생성

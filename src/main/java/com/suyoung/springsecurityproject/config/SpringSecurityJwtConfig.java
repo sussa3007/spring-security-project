@@ -1,6 +1,5 @@
 package com.suyoung.springsecurityproject.config;
 
-import com.suyoung.springsecurityproject.filter.TesterAuthenticationFilter;
 import com.suyoung.springsecurityproject.filter.jwt.JwtAuthenticationFilter;
 import com.suyoung.springsecurityproject.filter.jwt.JwtAuthorizationFilter;
 import com.suyoung.springsecurityproject.filter.jwt.JwtProperties;
@@ -15,8 +14,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -26,7 +23,7 @@ import java.util.Arrays;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SpringSecurityConfigV1 {
+public class SpringSecurityJwtConfig {
 
     private final UserRepository userRepository;
 
@@ -35,28 +32,23 @@ public class SpringSecurityConfigV1 {
         // basic authentication
 //        http.httpBasic(); // basic authentication filter 활성화
         http.httpBasic().disable(); // basic authentication filter 비활성화
-
         // csrf
         http.csrf().disable();
-
-        //frameOptions
-        http.headers().frameOptions().sameOrigin();
-
-        //cors
-        http.cors(Customizer.withDefaults());
-
-        //stateless
-//        http.sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
         // remember-me
         http.rememberMe();
-        //tester authentication filter
-//        http.apply(new CustomFilterConfig());
+        //stateless
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        // filter
+        http.apply(new CustomFilterConfig());
+//        //frameOptions
+        http.headers().frameOptions().sameOrigin();
+//        //cors
+        http.cors(Customizer.withDefaults());
 
         // permit
         http.authorizeHttpRequests()
-                .antMatchers("/","/images/**", "/css/**", "/home", "/signup","/login").permitAll()
+                .antMatchers("/","/images/**", "/css/**", "/home", "/signup").permitAll()
                 .antMatchers("/post").hasRole("USER")
                 .antMatchers("/admin").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/notice").hasRole("ADMIN")
@@ -83,20 +75,14 @@ public class SpringSecurityConfigV1 {
     public class CustomFilterConfig extends AbstractHttpConfigurer<CustomFilterConfig, HttpSecurity> {
         @Override
         public void configure(HttpSecurity builder) throws Exception {
-//            System.out.println("# Do filter");
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
-//            TesterAuthenticationFilter testerAuthenticationFilter = new TesterAuthenticationFilter(authenticationManager);
-//            testerAuthenticationFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/login","POST"));
-//            builder.addFilter(testerAuthenticationFilter);
 
             System.out.println("# Do Jwt filter");
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager);
             JwtAuthorizationFilter jwtAuthorizationFilter = new JwtAuthorizationFilter(userRepository);
-            jwtAuthenticationFilter.setFilterProcessesUrl("/login");
 
-            builder
-                    .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-                    .addFilterBefore(jwtAuthorizationFilter, BasicAuthenticationFilter.class);
+            builder.addFilter(jwtAuthenticationFilter)
+                    .addFilterAfter(jwtAuthorizationFilter, JwtAuthenticationFilter.class);
 
         }
     }

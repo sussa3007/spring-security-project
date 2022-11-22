@@ -9,7 +9,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,7 +21,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     private final AuthenticationManager authenticationManager;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
-//        super(authenticationManager);
+        super(authenticationManager);
         this.authenticationManager = authenticationManager;
     }
 
@@ -40,7 +39,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 new ArrayList<>()
         );
         return authenticationManager.authenticate(authenticationToken);
-
     }
     /*인증에 성공 했을때
     * JWT Token을 생성하여 쿠키에 삽입
@@ -51,12 +49,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             FilterChain chain,
             Authentication authResult
-    ) throws IOException, ServletException {
+    ) throws IOException {
         User user = (User) authResult.getPrincipal();
         String token = JwtUtils.createToken(user);
-        // 쿠키생성
+        // 쿠키 생성
         Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, token);
-        cookie.setMaxAge(JwtProperties.EXPIRATION_TIME);
+        cookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
         cookie.setPath("/");
         response.addCookie(cookie);
         response.sendRedirect("/");
@@ -67,7 +65,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException failed
-    ) throws IOException, ServletException {
+    ) throws IOException {
         response.sendRedirect("/login");
     }
 }
